@@ -8,7 +8,7 @@ NOTE: This installs the `sfgraph` command-line utility
 ~~~
 $ pip install spiderfoot-neo4j
 ~~~
-**Step 2: Start Neo4j**
+### Step 2: Start Neo4j
 NOTE: [Docker must first be installed](https://docs.docker.com/get-docker/)
 ~~~
 $ docker run --rm --name sfgraph -v "$(pwd)/neo4j_database:/data" -e 'NEO4J_AUTH=neo4j/CHANGETHISIFYOURENOTZUCK' -e 'NEO4JLABS_PLUGINS=["apoc", "graph-data-science"]' -e 'NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*' -p "7474:7474" -p "7687:7687" neo4j
@@ -23,11 +23,10 @@ $ sfgraph path_to/spiderfoot.db -s <SCANID_1> <SCANID_2> ...
 ### Step 4: Browse Spiderfoot Data in Neo4j
 Visit http://127.0.0.1:7474 and log in with `neo4j/CHANGETHISIFYOURENOTZUCK`
 
-### Step 5 (Optional): Find more targets with cool algorithms
-
+### Step 5 (Optional): Use cool algorithms to find new targets
 The `--suggest` option will rank nodes based on their connectedness in the graph. This is perfect for finding closely-related affiliates (child companies, etc.) to scan and add to the graph. By default, [Harmonic Centrality](https://neo4j.com/docs/graph-data-science/current/algorithms/harmonic-centrality/) is used, but others such as [PageRank](https://neo4j.com/docs/graph-data-science/current/algorithms/page-rank/) can be specified with `--closeness-algorithm`
 ~~~
-$ sfgraph --suggest
+$ sfgraph --suggest DOMAIN_NAME
 ~~~
 
 ![Closeness scores](https://user-images.githubusercontent.com/20261699/129263951-977d1092-8fdd-4ea1-bccb-d1ab6e4a6612.png)
