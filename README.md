@@ -6,7 +6,7 @@ Import, visualize, and analyze SpiderFoot scans in Neo4j, a graph database
 ### Step 1: Installation
 NOTE: This installs the `sfgraph` command-line utility
 ~~~
-$ pip install sf-neo4j
+$ pip install spiderfoot-neo4j
 ~~~
 **Step 2: Start Neo4j**
 NOTE: [Docker must first be installed](https://docs.docker.com/get-docker/)
