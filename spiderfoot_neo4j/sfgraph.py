@@ -98,7 +98,8 @@ def go():
         options.suggest = options.suggest.upper().split('AFFILIATE_', 1)[-1]
 
         assert not (options.scans and not options.sqlitedb), 'Please specify path to SpiderFoot database with --sqlitedb'
-        assert Path(str(options.sqlitedb)).is_file(), f'Unable to access sqlite database: {options.sqlitedb}'
+        if options.scans:
+            assert Path(str(options.sqlitedb)).is_file(), f'Unable to access sqlite database: {options.sqlitedb}'
 
         if options.debug:
             log.setLevel(logging.DEBUG)
