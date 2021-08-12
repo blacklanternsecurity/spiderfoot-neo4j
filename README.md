@@ -1,5 +1,5 @@
 # SpiderFoot Neo4j Tools
-Import, visualize, and analyze SpiderFoot scans in Neo4j, a graph database
+Import, visualize, and analyze SpiderFoot OSINT data in Neo4j, a graph database
 
 ![Spiderfoot data in Neo4j](https://user-images.githubusercontent.com/20261699/129265805-056ef29a-aea9-4be0-90fc-383ae15510c5.png)
 
