@@ -1,7 +1,7 @@
 # SpiderFoot Neo4j Tools
 Import, visualize, and analyze SpiderFoot OSINT data in Neo4j, a graph database
 
-![Spiderfoot data in Neo4j](https://user-images.githubusercontent.com/20261699/129265805-056ef29a-aea9-4be0-90fc-383ae15510c5.png)
+![A big graph](https://user-images.githubusercontent.com/20261699/129272391-ba0299a1-83da-4037-a55d-d607b620dc05.png)
 
 ### Step 1: Installation
 NOTE: This installs the `sfgraph` command-line utility
@@ -22,6 +22,7 @@ $ sfgraph path_to/spiderfoot.db -s <SCANID_1> <SCANID_2> ...
 
 ### Step 4: Browse Spiderfoot Data in Neo4j
 Visit http://127.0.0.1:7474 and log in with `neo4j/CHANGETHISIFYOURENOTZUCK`
+![Spiderfoot data in Neo4j](https://user-images.githubusercontent.com/20261699/129265805-056ef29a-aea9-4be0-90fc-383ae15510c5.png)
 
 ### Step 5 (Optional): Use cool algorithms to find new targets
 The `--suggest` option will rank nodes based on their connectedness in the graph. This is perfect for finding closely-related affiliates (child companies, etc.) to scan and add to the graph. By default, [Harmonic Centrality](https://neo4j.com/docs/graph-data-science/current/algorithms/harmonic-centrality/) is used, but others such as [PageRank](https://neo4j.com/docs/graph-data-science/current/algorithms/page-rank/) can be specified with `--closeness-algorithm`
