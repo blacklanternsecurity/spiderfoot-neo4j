@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spiderfoot-neo4j"
-version = "1.0.0"
+version = "1.0.1"
 description = "Import, visualize, and analyze SpiderFoot scans in Neo4j, a graph database"
 authors = ["TheTechromancer"]
 license = "GPL-3.0"
