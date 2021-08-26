@@ -119,5 +119,8 @@ def go():
         log.error('Interrupted')
         sys.exit(1)
 
+    except BrokenPipeError:
+        pass
+
 if __name__ == '__main__':
     go()

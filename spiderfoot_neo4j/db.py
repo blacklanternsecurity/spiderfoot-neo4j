@@ -59,16 +59,34 @@ class Neo4jDb:
         ):
             events[event['hash']] = event
 
+        # break into batches for better performance
+        batches = []
+        batch_size = 1000
+
         graph = None
-        for event in events.values():
-            sourceEvent = events[event['source_event_hash']]
-            subgraph = self.makeSubgraph(event, sourceEvent)
-            if graph is not None:
-                graph = graph | subgraph
-            else:
-                graph = subgraph
-            counter += 1
-            sys.stdout.write(f'\r[+] Imported {counter:,} events from scan {scanId}')
+        for i,event in enumerate(events.values()):
+            try:
+                sourceEvent = events[event['source_event_hash']]
+                moduleType = self._sanitizeString(event.get('module', '').split('sfp_')[-1]).upper()
+                subgraph = self.makeSubgraph(event, sourceEvent)
+                if graph is not None:
+                    graph = graph | subgraph
+                else:
+                    graph = subgraph
+                if i % batch_size == 0:
+                    batches.append(graph)
+                    graph = None
+                counter += 1
+                sys.stdout.write(f'\r[+] Imported {counter:,} events from scan {scanId}')
+            except Exception as e:
+                print(f'\nError importing event: {event}. Please report this is a bug.\n')
+        if graph:
+            batches.append(graph)
+
+        if batches:
+            graph = batches[0]
+            for g in batches[:-1]:
+                graph = graph | g
 
         print('')
         self._graph.merge(graph)
@@ -174,9 +192,11 @@ class Neo4jDb:
         affiliate = False
         scanned = False
         # 'affiliate' label is stripped off and stored as attribute
-        eventTypes = event['type'].split('AFFILIATE_', 1)
-        eventType = self._sanitizeString(eventTypes[-1])
-        if len(eventTypes) > 1 or event.get('affiliate', False):
+        if event['type'].startswith('AFFILIATE_'):
+            eventType = self._sanitizeString(event['type'].split('AFFILIATE_', 1))
+        else:
+            eventType = self._sanitizeString(event['type'])
+        if 'AFFILIATE_' in event['type'] or event.get('affiliate', False):
             affiliate = True
         else:
             scanned = True
@@ -219,18 +239,20 @@ class Neo4jDb:
 
     def makeDomainNode(self, sourceNode, child=None):
         data = sourceNode.get('data', '').strip().lower()
+        label = list(sourceNode.labels)[0]
         host = data.split('@')[-1].strip()
         parentDomain = host.split('.', 1)[-1]
 
-        if tld.is_tld(parentDomain):
+        if label == 'EMAILADDR':
             parentData = host
-            parentType = 'DOMAIN_NAME'
-        elif tld.is_tld(parentDomain.split('.', 1)[-1]):
-            parentData = parentDomain
-            parentType = 'DOMAIN_NAME'
-        else:
-            parentData = parentDomain
             parentType = 'INTERNET_NAME'
+        else:
+            if tld.is_tld(parentDomain):
+                parentData = host
+                parentType = 'DOMAIN_NAME'
+            else:
+                parentData = parentDomain
+                parentType = 'INTERNET_NAME'
 
         nodeData = {
             'data': parentData,
