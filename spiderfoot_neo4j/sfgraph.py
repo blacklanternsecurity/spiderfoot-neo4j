@@ -87,7 +87,6 @@ def go():
     parser.add_argument('--closeness-algorithm', default='harmonicCentrality', choices=['pageRank', 'articleRank', 'closenessCentrality', 'harmonicCentrality', 'betweennessCentrality', 'eigenvectorCentrality'], help='Algorithm to use when suggesting targets')
     parser.add_argument('-v', '-d', '--debug', action='store_true', help='Verbose / debug')
 
-    syntax_error = False
     try:
 
         if len(sys.argv) == 1:
