@@ -11,7 +11,7 @@ $ pip install spiderfoot-neo4j
 ### Step 2: Start Neo4j
 NOTE: [Docker must first be installed](https://docs.docker.com/get-docker/)
 ~~~
-$ docker run --rm --name sfgraph -v "$(pwd)/neo4j_database:/data" -e 'NEO4J_AUTH=neo4j/CHANGETHISIFYOURENOTZUCK' -e 'NEO4JLABS_PLUGINS=["apoc", "graph-data-science"]' -e 'NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*' -p "7474:7474" -p "7687:7687" neo4j
+$ docker run --rm --name sfgraph -v "$(pwd)/neo4j_database:/data" -e 'NEO4J_AUTH=neo4j/CHANGETHISIFYOURENOTZUCK' -e 'NEO4J_PLUGINS=["apoc", "graph-data-science"]' -e 'NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*' -p "7474:7474" -p "7687:7687" neo4j
 ~~~
 ### Step 3: Import Scans
 

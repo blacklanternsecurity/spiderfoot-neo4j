@@ -8,7 +8,7 @@ services:
       - ./neo4j_database:/data
     environment:
       - NEO4J_AUTH=neo4j/CHANGETHISIFYOURENOTZUCK
-      - NEO4JLABS_PLUGINS=["apoc", "graph-data-science"]
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*
     ports:
       - "7474:7474"
