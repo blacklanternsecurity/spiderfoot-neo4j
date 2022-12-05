@@ -1,14 +1,17 @@
 # SpiderFoot Neo4j Tools
-Import, visualize, and analyze SpiderFoot OSINT data in Neo4j, a graph database
+Import, visualize, and analyze SpiderFoot OSINT data in Neo4j, a graph database.
 
 ![A big graph](https://user-images.githubusercontent.com/20261699/129272391-ba0299a1-83da-4037-a55d-d607b620dc05.png)
 
 ### Step 1: Installation
+
 NOTE: This installs the `sfgraph` command-line utility
 ~~~
 $ pip install spiderfoot-neo4j
 ~~~
+
 ### Step 2: Start Neo4j
+
 NOTE: [Docker must first be installed](https://docs.docker.com/get-docker/)
 ~~~
 $ docker run --rm --name sfgraph -v "$(pwd)/neo4j_database:/data" -e 'NEO4J_AUTH=neo4j/CHANGETHISIFYOURENOTZUCK' -e 'NEO4J_PLUGINS=["apoc", "graph-data-science"]' -e 'NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*' -p "7474:7474" -p "7687:7687" neo4j
@@ -16,16 +19,20 @@ $ docker run --rm --name sfgraph -v "$(pwd)/neo4j_database:/data" -e 'NEO4J_AUTH
 ### Step 3: Import Scans
 
 ![Spiderfoot scan ID in web browser](https://user-images.githubusercontent.com/20261699/129256011-ff751637-afdd-4632-8335-24ffae2ff65e.png)
+
 ~~~
-$ sfgraph path_to/spiderfoot.db -s <SCANID_1> <SCANID_2> ...
+$ sfgraph -db path_to/spiderfoot.db -s <SCANID_1> <SCANID_2> ...
 ~~~
 
 ### Step 4: Browse Spiderfoot Data in Neo4j
+
 Visit http://127.0.0.1:7474 and log in with `neo4j/CHANGETHISIFYOURENOTZUCK`
+
 ![Spiderfoot data in Neo4j](https://user-images.githubusercontent.com/20261699/129265805-056ef29a-aea9-4be0-90fc-383ae15510c5.png)
 
 ### Step 5 (Optional): Use cool algorithms to find new targets
-The `--suggest` option will rank nodes based on their connectedness in the graph. This is perfect for finding closely-related affiliates (child companies, etc.) to scan and add to the graph. By default, [Harmonic Centrality](https://neo4j.com/docs/graph-data-science/current/algorithms/harmonic-centrality/) is used, but others such as [PageRank](https://neo4j.com/docs/graph-data-science/current/algorithms/page-rank/) can be specified with `--closeness-algorithm`
+The `--suggest` option will rank nodes based on their connectedness in the graph. This is perfect for finding closely-related affiliates (child companies, etc.) to scan and add to the graph. By default, [Harmonic Centrality](https://neo4j.com/docs/graph-data-science/current/algorithms/harmonic-centrality/) is used, but others such as [PageRank](https://neo4j.com/docs/graph-data-science/current/algorithms/page-rank/) can be specified with `--closeness-algorithm`.
+
 ~~~
 $ sfgraph --suggest DOMAIN_NAME
 ~~~
@@ -33,6 +40,7 @@ $ sfgraph --suggest DOMAIN_NAME
 ![Closeness scores](https://user-images.githubusercontent.com/20261699/129263951-977d1092-8fdd-4ea1-bccb-d1ab6e4a6612.png)
 
 ## Example CYPHER Queries
+
 ~~~
 # match all INTERNET_NAMEs
 MATCH (n:INTERNET_NAME) RETURN n
@@ -57,6 +65,7 @@ MATCH (n {affiliate: true}) return n
 ~~~
 
 ## CLI Help
+
 ~~~
 sfgraph [-h] [-db SQLITEDB] [-s SCANS [SCANS ...]] [--uri URI] [-u USERNAME] [-p PASSWORD] [--clear] [--suggest SUGGEST]
                [--closeness-algorithm {pageRank,articleRank,closenessCentrality,harmonicCentrality,betweennessCentrality,eigenvectorCentrality}] [-v]
