@@ -5,7 +5,6 @@ import logging
 import argparse
 from pathlib import Path
 
-# fscking imports amirite
 package_path = Path(__file__).resolve().parent
 sys.path.append(str(package_path))
 from db import Neo4jDb
@@ -13,14 +12,12 @@ from db import Neo4jDb
 log = logging.getLogger('sfgraph')
 log.setLevel(logging.INFO)
 log_format = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-
 console_handler = logging.StreamHandler(sys.stderr)
 console_handler.setFormatter(log_format)
 log.addHandler(console_handler)
 
 
 def main(options):
-
     neo4j = Neo4jDb(
         options.sqlitedb,
         uri=options.uri,
@@ -48,9 +45,9 @@ def main(options):
                 if node.get('scanned', False):
                     already_scanned = 'Yes'
                 suggestion = {
-                    'Data': data,
-                    'Score': score,
-                    'Scanned': already_scanned
+                  'Data': data,
+                  'Score': score,
+                  'Scanned': already_scanned
                 }
                 if data:
                     try:
@@ -63,7 +60,7 @@ def main(options):
         row_format = row_format = '{}{:<12}{:<12}'
         print(row_format.format(*['Data'.ljust(max_data_len) + '  ', 'Scanned', 'Score']))
         print('-' * (max_data_len + 20))
-        for k,v in suggestions:
+        for k, v in suggestions:
             k = k.ljust(max_data_len) + '  '
             values = []
             try:
@@ -75,7 +72,6 @@ def main(options):
 
 
 def go():
-
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-db', '--sqlitedb', default='', help='Spiderfoot sqlite database')
     parser.add_argument('-s', '--scans', nargs='+', default=[], help='scan IDs to import')
@@ -87,9 +83,7 @@ def go():
     parser.add_argument('--closeness-algorithm', default='harmonicCentrality', choices=['pageRank', 'articleRank', 'closenessCentrality', 'harmonicCentrality', 'betweennessCentrality', 'eigenvectorCentrality'], help='Algorithm to use when suggesting targets')
     parser.add_argument('-v', '-d', '--debug', action='store_true', help='Verbose / debug')
 
-    syntax_error = False
     try:
-
         if len(sys.argv) == 1:
             parser.print_help()
             sys.exit(1)
@@ -121,6 +115,7 @@ def go():
 
     except BrokenPipeError:
         pass
+
 
 if __name__ == '__main__':
     go()
