@@ -1,12 +1,12 @@
-import re
-import sys
-import tld
-import time
-import py2neo
 import hashlib
 import logging
-import sqlite3
+import re
 from collections import OrderedDict
+import sqlite3
+import sys
+import time
+import py2neo
+import tld
 
 logging.getLogger('py2neo').setLevel(logging.WARNING)
 
@@ -54,8 +54,8 @@ class Neo4jDb:
         counter = 0
         events = {}
         for event in self.runSql(
-            'SELECT * FROM tbl_scan_results WHERE scan_instance_id = :scan_instance_id',
-            {'scan_instance_id': scanId}
+          'SELECT * FROM tbl_scan_results WHERE scan_instance_id = :scan_instance_id',
+          {'scan_instance_id': scanId}
         ):
             events[event['hash']] = event
 
@@ -67,7 +67,6 @@ class Neo4jDb:
         for i,event in enumerate(events.values()):
             try:
                 sourceEvent = events[event['source_event_hash']]
-                moduleType = self._sanitizeString(event.get('module', '').split('sfp_')[-1]).upper()
                 subgraph = self.makeSubgraph(event, sourceEvent)
                 if graph is not None:
                     graph = graph | subgraph
@@ -78,8 +77,9 @@ class Neo4jDb:
                     graph = None
                 counter += 1
                 sys.stdout.write(f'\r[+] Imported {counter:,} events from scan {scanId}')
-            except Exception as e:
-                print(f'\nError importing event: {event}. Please report this is a bug.\n')
+            except Exception:
+                print(f'\nError importing event: {event}. Please report this as a bug!\n')
+
         if graph:
             batches.append(graph)
 
@@ -121,66 +121,73 @@ class Neo4jDb:
         except py2neo.errors.ClientError:
             pass
         return self.run('''
-            CALL gds.graph.create('everything','*', '*')
-            YIELD graphName, nodeCount, relationshipCount''')
+          CALL gds.graph.create('everything','*', '*')
+          YIELD graphName, nodeCount, relationshipCount
+        ''')
 
     def pageRank(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.pageRank.stream('everything')
-            YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId) AS n, score
-            ORDER BY score DESC'''):
+          CALL gds.pageRank.stream('everything')
+          YIELD nodeId, score
+          RETURN gds.util.asNode(nodeId) AS n, score
+          ORDER BY score DESC
+        '''):
             if r['n'] and r['score']:
                 yield (r['n'], r['score'])
 
     def articleRank(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.pageRank.stream('everything')
-            YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId) AS n, score
-            ORDER BY score DESC'''):
+          CALL gds.pageRank.stream('everything')
+          YIELD nodeId, score
+          RETURN gds.util.asNode(nodeId) AS n, score
+          ORDER BY score DESC
+        '''):
             if r['n'] and r['score']:
                 yield (r['n'], r['score'])
 
     def closenessCentrality(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.alpha.closeness.stream('everything')
-            YIELD nodeId, centrality
-            RETURN gds.util.asNode(nodeId) AS n, centrality
-            ORDER BY centrality DESC'''):
+          CALL gds.alpha.closeness.stream('everything')
+          YIELD nodeId, centrality
+          RETURN gds.util.asNode(nodeId) AS n, centrality
+          ORDER BY centrality DESC
+        '''):
             if r['n'] and r['centrality']:
                 yield (r['n'], r['centrality'])
 
     def harmonicCentrality(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.alpha.closeness.harmonic.stream('everything')
-            YIELD nodeId, centrality
-            RETURN gds.util.asNode(nodeId) AS n, centrality
-            ORDER BY centrality DESC'''):
+          CALL gds.alpha.closeness.harmonic.stream('everything')
+          YIELD nodeId, centrality
+          RETURN gds.util.asNode(nodeId) AS n, centrality
+          ORDER BY centrality DESC
+        '''):
             if r['n'] and r['centrality']:
                 yield (r['n'], r['centrality'])
 
     def betweennessCentrality(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.betweenness.stream('everything')
-            YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId) AS n, score
-            ORDER BY score DESC'''):
+          CALL gds.betweenness.stream('everything')
+          YIELD nodeId, score
+          RETURN gds.util.asNode(nodeId) AS n, score
+          ORDER BY score DESC
+        '''):
             if r['n'] and r['score']:
                 yield (r['n'], r['score'])
 
     def eigenvectorCentrality(self):
         self.projectAll()
         for r in self.run('''
-            CALL gds.eigenvector.stream('everything')
-            YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId) AS n, score
-            ORDER BY score DESC'''):
+          CALL gds.eigenvector.stream('everything')
+          YIELD nodeId, score
+          RETURN gds.util.asNode(nodeId) AS n, score
+          ORDER BY score DESC
+        '''):
             if r['n'] and r['score']:
                 yield (r['n'], r['score'])
 
@@ -215,12 +222,12 @@ class Neo4jDb:
             self.uniquenessConstraints.add(eventType)
 
         nodeData = {
-            'data': storeData,
-            'hash': eventHash,
-            'confidence': event.get('confidence', 100),
-            'visibility': event.get('visibility', 100),
-            'risk': event.get('risk', 0),
-            'generated': event.get('generated', round(time.time(), 5))
+          'data': storeData,
+          'hash': eventHash,
+          'confidence': event.get('confidence', 100),
+          'visibility': event.get('visibility', 100),
+          'risk': event.get('risk', 0),
+          'generated': event.get('generated', round(time.time(), 5))
         }
 
         if affiliate:
@@ -230,8 +237,8 @@ class Neo4jDb:
 
         # event node
         eventNode = py2neo.Node(
-            eventType,
-            **nodeData
+          eventType,
+          **nodeData
         )
         eventNode.__primarylabel__ = eventType
         eventNode.__primarykey__ = 'hash'
@@ -255,8 +262,8 @@ class Neo4jDb:
                 parentType = 'INTERNET_NAME'
 
         nodeData = {
-            'data': parentData,
-            'type': parentType,
+          'data': parentData,
+          'type': parentType,
         }
         affiliate = sourceNode.get('affiliate', False)
         scanned = sourceNode.get('scanned', False)
