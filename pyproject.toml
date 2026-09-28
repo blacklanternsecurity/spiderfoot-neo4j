@@ -3,7 +3,7 @@ name = "spiderfoot-neo4j"
 version = "1.0.1"
 description = "Import, visualize, and analyze SpiderFoot scans in Neo4j, a graph database"
 authors = ["TheTechromancer"]
-license = "GPL-3.0"
+license = "AGPL-3.0"
 repository = "https://github.com/blacklanternsecurity/spiderfoot-neo4j"
 homepage = "https://github.com/blacklanternsecurity/spiderfoot-neo4j"
 
